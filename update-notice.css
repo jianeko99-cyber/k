@@ -1,0 +1,271 @@
+/* 更新通知弹窗样式 - 魔法少女风格 */
+#update-notice-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.update-notice-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.update-notice-content {
+  position: relative;
+  width: 75%;
+  max-width: 380px;
+  max-height: 70vh;
+  background-color: #fffef8;
+  border: 3px solid #ffe4b3;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(255, 200, 120, 0.3);
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+  overflow: visible;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.update-notice-header {
+  padding: 20px 18px 14px;
+  border-bottom: 2px solid #fff0e0;
+  text-align: center;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 17px 17px 0 0;
+  overflow: visible;
+}
+
+.update-header-image {
+  position: absolute;
+  top: -35px;
+  left: -35px;
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  z-index: 100000;
+  pointer-events: none;
+}
+
+.update-notice-header h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffb366;
+}
+
+.update-subtitle {
+  margin: 0;
+  font-size: 11px;
+  color: #ffc999;
+}
+
+.update-notice-body {
+  padding: 14px 18px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: #fffef8;
+  border-radius: 0 0 17px 17px;
+}
+
+.update-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+.update-number {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background-color: #ffd699;
+  color: #8b6914;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(255, 200, 120, 0.3);
+}
+
+.update-item p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #5a4a3a;
+  padding-top: 2px;
+}
+
+.update-footer-text {
+  margin: 14px 0 0 0;
+  padding-top: 12px;
+  border-top: 2px dashed #fff0e0;
+  font-size: 11px;
+  color: #8a7a6a;
+  line-height: 1.5;
+}
+
+.update-notice-buttons {
+  padding: 12px 18px;
+  border-top: 2px solid #fff0e0;
+  display: flex;
+  gap: 10px;
+  background-color: #ffffff;
+}
+
+.update-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid #ffe4b3;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.update-btn-close {
+  background-color: #ffd699;
+  color: #8b6914;
+  border-color: #ffd699;
+}
+
+.update-btn-close:not(:disabled):hover {
+  background-color: #ffc266;
+  border-color: #ffc266;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 200, 120, 0.4);
+}
+
+.update-btn-close:disabled {
+  background-color: #ffe9cc;
+  border-color: #ffe9cc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.update-btn-dismiss {
+  background-color: #ffffff;
+  color: #ffb366;
+  border-color: #ffe4b3;
+}
+
+.update-btn-dismiss:hover {
+  background-color: #fffef8;
+  border-color: #ffd699;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 200, 120, 0.2);
+}
+
+.update-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+/* 滚动条样式 */
+.update-notice-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.update-notice-body::-webkit-scrollbar-track {
+  background: #fff5e6;
+  border-radius: 3px;
+}
+
+.update-notice-body::-webkit-scrollbar-thumb {
+  background: #ffe4b3;
+  border-radius: 3px;
+}
+
+.update-notice-body::-webkit-scrollbar-thumb:hover {
+  background: #ffd699;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .update-notice-content {
+    width: 85%;
+    max-height: 75vh;
+  }
+
+  .update-notice-header {
+    padding: 18px 16px 12px;
+  }
+
+  .update-header-image {
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    left: -30px;
+  }
+
+  .update-notice-header h3 {
+    font-size: 16px;
+  }
+
+  .update-subtitle {
+    font-size: 10px;
+  }
+
+  .update-notice-body {
+    padding: 12px 16px;
+  }
+
+  .update-item {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .update-number {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .update-item p {
+    font-size: 11px;
+  }
+
+  .update-footer-text {
+    font-size: 10px;
+  }
+
+  .update-notice-buttons {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 16px;
+  }
+
+  .update-btn {
+    width: 100%;
+    padding: 9px 14px;
+    font-size: 12px;
+  }
+}
