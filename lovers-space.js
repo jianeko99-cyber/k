@@ -446,15 +446,14 @@ async function renderLoversSpace(chat) {
   document.getElementById("lovers-space-screen").style.backgroundImage =
     `url(${chat.loversSpaceData.background})`;
 
-  const userNickname = chat.loversSpaceData.userNickname || state.qzoneSettings.nickname || "{{user}}";
-  const charNickname = chat.loversSpaceData.charNickname || chat.name;
+  const userNickname = state.qzoneSettings.nickname || "{{user}}";
   document.getElementById("ls-char-name").textContent =
-    `${userNickname} & ${charNickname}`;
+    `${userNickname} & ${chat.name}`;
 
   document.getElementById("ls-user-avatar").src =
-    chat.loversSpaceData.userAvatar || chat.settings.myAvatar || defaultAvatar;
+    chat.settings.myAvatar || defaultAvatar;
   document.getElementById("ls-char-avatar").src =
-    chat.loversSpaceData.charAvatar || chat.settings.aiAvatar || defaultAvatar;
+    chat.settings.aiAvatar || defaultAvatar;
 
   updateLoversSpaceDaysCounter(chat);
 
@@ -3127,14 +3126,13 @@ async function triggerPomodoroBreakResponse(userText) {
 
   // 2.1 世界书
   let worldBookContext = "";
-  const linkedIds = chat.settings.linkedWorldBookIds || [];
-  const booksToInclude = state.worldBooks.filter(book => 
-    linkedIds.includes(book.id) || book.isGlobal
-  );
-
-  if (booksToInclude.length > 0) {
-    const linkedContents = booksToInclude
-      .map((book) => {
+  if (
+    chat.settings.linkedWorldBookIds &&
+    chat.settings.linkedWorldBookIds.length > 0
+  ) {
+    const linkedContents = chat.settings.linkedWorldBookIds
+      .map((id) => {
+        const book = state.worldBooks.find((b) => b.id === id);
         return book && book.content
           ? `\n\n## 世界书条目: ${book.name}\n${book.content}`
           : "";
@@ -3886,57 +3884,9 @@ function initLoversSpace() {
       // 将已保存的日期加载到输入框中
       document.getElementById("ls-start-date-input").value =
         chat.loversSpaceData.relationshipStartDate || "";
-      // 加载昵称设置
-      document.getElementById("ls-user-nickname-input").value =
-        chat.loversSpaceData.userNickname || "";
-      document.getElementById("ls-char-nickname-input").value =
-        chat.loversSpaceData.charNickname || "";
-        
-      // 加载头像设置
-      const userAvatar = chat.loversSpaceData.userAvatar || chat.settings.myAvatar || defaultAvatar;
-      const charAvatar = chat.loversSpaceData.charAvatar || chat.settings.aiAvatar || defaultAvatar;
-      
-      document.getElementById("ls-settings-user-avatar-input").value = chat.loversSpaceData.userAvatar || "";
-      document.getElementById("ls-settings-user-avatar-preview").src = userAvatar;
-      
-      document.getElementById("ls-settings-char-avatar-input").value = chat.loversSpaceData.charAvatar || "";
-      document.getElementById("ls-settings-char-avatar-preview").src = charAvatar;
     }
     document.getElementById("ls-settings-modal").classList.add("visible");
   });
-
-  // 头像上传预览处理函数
-  const handleAvatarFileSelect = (fileInputId, urlInputId, previewImgId) => {
-      const fileInput = document.getElementById(fileInputId);
-      const urlInput = document.getElementById(urlInputId);
-      const previewImg = document.getElementById(previewImgId);
-      
-      if (!fileInput || !urlInput || !previewImg) return;
-      
-      fileInput.addEventListener('change', (e) => {
-          const file = e.target.files[0];
-          if (file) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                  const result = e.target.result;
-                  previewImg.src = result;
-                  urlInput.value = result; // 将Base64填入输入框，方便保存
-              };
-              reader.readAsDataURL(file);
-          }
-      });
-      
-      // 监听URL输入变化实时预览
-      urlInput.addEventListener('input', (e) => {
-          if (e.target.value.trim()) {
-              previewImg.src = e.target.value.trim();
-          }
-      });
-  };
-
-  // 初始化头像上传监听
-  handleAvatarFileSelect('ls-settings-user-avatar-file', 'ls-settings-user-avatar-input', 'ls-settings-user-avatar-preview');
-  handleAvatarFileSelect('ls-settings-char-avatar-file', 'ls-settings-char-avatar-input', 'ls-settings-char-avatar-preview');
 
   document
     .getElementById("ls-settings-cancel-btn")
@@ -3952,27 +3902,6 @@ function initLoversSpace() {
 
       const newDate = document.getElementById("ls-start-date-input").value;
       chat.loversSpaceData.relationshipStartDate = newDate;
-      
-      // 保存昵称设置
-      chat.loversSpaceData.userNickname = document.getElementById("ls-user-nickname-input").value.trim();
-      chat.loversSpaceData.charNickname = document.getElementById("ls-char-nickname-input").value.trim();
-
-      // 保存头像设置
-      const newUserAvatar = document.getElementById("ls-settings-user-avatar-input").value.trim();
-      if (newUserAvatar) {
-          chat.loversSpaceData.userAvatar = newUserAvatar;
-      } else {
-          // 如果清空了输入框，是否要删除自定义头像？
-          // 如果用户本意是恢复默认，清空输入框应该删除自定义属性
-          delete chat.loversSpaceData.userAvatar;
-      }
-
-      const newCharAvatar = document.getElementById("ls-settings-char-avatar-input").value.trim();
-      if (newCharAvatar) {
-          chat.loversSpaceData.charAvatar = newCharAvatar;
-      } else {
-          delete chat.loversSpaceData.charAvatar;
-      }
 
       await db.chats.put(chat); // 保存到数据库
 
@@ -3980,7 +3909,7 @@ function initLoversSpace() {
       await renderLoversSpace(chat);
 
       document.getElementById("ls-settings-modal").classList.remove("visible");
-      alert("设置已保存！");
+      alert("纪念日已保存！");
     });
 
   // 情侣空间相册事件监听
