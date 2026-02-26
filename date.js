@@ -1065,6 +1065,15 @@ ${recentChatHistory}
     ...(datingGameState.extraWorldBookIds || []), // 本次约会临时挂载的世界书
   ]);
 
+  // 【新增】自动加上所有全局世界书
+  if (window.state.worldBooks) {
+     window.state.worldBooks.forEach(book => {
+       if (book.isGlobal) {
+         allWorldBookIds.add(book.id);
+       }
+     });
+  }
+
   if (allWorldBookIds.size > 0) {
     const linkedContents = Array.from(allWorldBookIds)
       .map((bookId) => {

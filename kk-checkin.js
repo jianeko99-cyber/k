@@ -73,15 +73,16 @@ async function generateHouseData(charId, includeComputer = true) {
     if (!proxyUrl || !apiKey || !model) throw new Error("API未配置");
 
     let worldBookContext = "";
-    if (
-      chat.settings.linkedWorldBookIds &&
-      chat.settings.linkedWorldBookIds.length > 0
-    ) {
+    const linkedIds = chat.settings.linkedWorldBookIds || [];
+    const booksToInclude = state.worldBooks.filter(book => 
+      linkedIds.includes(book.id) || book.isGlobal
+    );
+
+    if (booksToInclude.length > 0) {
       worldBookContext =
         "--- 世界观设定 (必须严格遵守) ---\n" +
-        chat.settings.linkedWorldBookIds
-          .map((id) => {
-            const book = state.worldBooks.find((b) => b.id === id);
+        booksToInclude
+          .map((book) => {
             return book ? `[${book.name}]: ${book.content}` : "";
           })
           .join("\n\n");
@@ -1106,15 +1107,18 @@ async function generateInitialSurveillanceFeeds(charId) {
     const { proxyUrl, apiKey, model } = state.apiConfig;
     if (!proxyUrl || !apiKey || !model) throw new Error("API未配置");
 
-    // 提取世界书、聊天记录和用户人设作为上下文
-    const worldBookContext = (
-      await Promise.all(
-        (chat.settings.linkedWorldBookIds || []).map(async (id) => {
-          const book = await db.worldBooks.get(id);
-          return book ? `\n## 世界书: ${book.name}\n${book.content}` : "";
-        }),
-      )
-    ).join("");
+    // Get linked IDs
+    const linkedIds = chat.settings.linkedWorldBookIds || [];
+    const allWorldBooks = await db.worldBooks.toArray(); // Get all books to check for global ones
+    
+    // Filter books that are linked OR global
+    const booksToInclude = allWorldBooks.filter(book => 
+      linkedIds.includes(book.id) || book.isGlobal
+    );
+
+    const worldBookContext = booksToInclude
+      .map(book => `\n## 世界书: ${book.name}\n${book.content}`)
+      .join("");
 
     const recentHistory = chat.history
       .slice(-10)
